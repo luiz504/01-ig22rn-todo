@@ -1,7 +1,5 @@
 import { render, screen } from '@testing-library/react-native'
 
-import Logo from '@assets/logo-full.svg'
-
 import { Home } from '.'
 import { colors } from '@/styles'
 
@@ -10,7 +8,7 @@ describe('Home Component', () => {
     render(<Home />)
 
     expect(screen.getByTestId('screen-container')).toBeTruthy()
-    expect(screen.UNSAFE_getByType(Logo)).toBeTruthy()
+    expect(screen.getByTestId('logo')).toBeTruthy()
 
     const inputElement = screen.getByPlaceholderText('Add a new task')
 
@@ -18,6 +16,5 @@ describe('Home Component', () => {
     expect(inputElement.props.placeholderTextColor).toEqual(colors['gray-300'])
 
     expect(screen.getByTestId('input')).toBeTruthy()
-    screen.debug()
   })
 })

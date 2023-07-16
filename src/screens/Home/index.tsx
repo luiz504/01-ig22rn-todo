@@ -13,6 +13,7 @@ import { z } from 'zod'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { generateRandomId } from '@/utils/generateRandomId'
+import { TaskCard } from './components/TaskCard'
 interface Task {
   id: string
   description: string
@@ -23,6 +24,7 @@ const formCreateTaskSchema = z.object({
   description: z.string().nonempty(),
 })
 type FormCreateTask = z.infer<typeof formCreateTaskSchema>
+
 export const Home: FC = () => {
   const inputRef = useRef<TextInput>(null)
   const { control, handleSubmit, setValue } = useForm<FormCreateTask>({
@@ -30,7 +32,12 @@ export const Home: FC = () => {
   })
 
   const [tasks, setTasks] = useState<Task[]>([
-    { description: ' Hello moto', done: false, id: '123123' },
+    {
+      description:
+        'Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet numquam at, nemo possimus impedit cumque ipsa dolorem officia accusamus minus qui perspiciatis aperiam, esse error alias sapiente ullam delectus eum?',
+      done: false,
+      id: '123123',
+    },
   ])
 
   const onSubmit = (data: FormCreateTask) => {
@@ -47,7 +54,7 @@ export const Home: FC = () => {
   return (
     <View testID="screen-container" style={styles.container}>
       <View style={styles.header}>
-        <Logo />
+        <Logo testID="logo" />
       </View>
 
       <View style={styles.body}>
@@ -92,8 +99,9 @@ export const Home: FC = () => {
         </View>
 
         {!tasks.length && <EmptyFeedback />}
+
         {tasks.map((task) => (
-          <Text key={task.id}>{task.id}</Text>
+          <TaskCard key={task.id} task={task} />
         ))}
       </View>
     </View>
