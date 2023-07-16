@@ -10,7 +10,8 @@
       "extends": ["plugin:testing-library/react"],
       "rules": {
         "testing-library/no-debugging-utils": "warn",
-        "@typescript-eslint/no-explicit-any": "off"
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-empty-function": "off"
       }
     }
   ],

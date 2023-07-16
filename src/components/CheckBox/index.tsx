@@ -5,8 +5,8 @@ import { Check } from 'phosphor-react-native'
 import { colors } from '@/styles'
 
 interface CheckboxProps extends PressableProps {
-  value?: boolean
-  onValueChange?: (value: boolean) => void
+  value: boolean
+  onValueChange: (value: boolean) => void
   size?: number
 }
 

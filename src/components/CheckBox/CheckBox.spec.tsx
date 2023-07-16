@@ -5,7 +5,9 @@ import { colors } from '@/styles'
 
 describe('CheckBox Component', () => {
   it('should render correctly with default props / unchecked', () => {
-    render(<CheckBox testID="checkbox" />)
+    render(
+      <CheckBox testID="checkbox" value={false} onValueChange={() => {}} />,
+    )
     const checkBox = screen.getByTestId('checkbox')
 
     expect(checkBox).toBeTruthy()
@@ -21,7 +23,7 @@ describe('CheckBox Component', () => {
   })
 
   it('should render correctly checked', () => {
-    render(<CheckBox testID="checkbox" value={true} />)
+    render(<CheckBox testID="checkbox" value={true} onValueChange={() => {}} />)
     const checkBox = screen.getByTestId('checkbox')
 
     expect(checkBox).toBeTruthy()
@@ -39,7 +41,13 @@ describe('CheckBox Component', () => {
 
   it('should call onValueChange with value true', () => {
     const onValueChangeMocked = jest.fn()
-    render(<CheckBox testID="checkbox" onValueChange={onValueChangeMocked} />)
+    render(
+      <CheckBox
+        testID="checkbox"
+        value={false}
+        onValueChange={onValueChangeMocked}
+      />,
+    )
 
     const checkBox = screen.getByTestId('checkbox')
 

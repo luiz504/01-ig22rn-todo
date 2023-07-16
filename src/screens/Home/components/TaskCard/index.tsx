@@ -1,11 +1,13 @@
 import { FC, useState } from 'react'
-import { Text, TouchableOpacity, View } from 'react-native'
+import { Text, TextStyle, TouchableOpacity, View } from 'react-native'
 
-import { styles } from './styles'
+import Trash from '@assets/trash.svg'
 
 import { CheckBox } from '@/components/CheckBox'
-import Trash from '@assets/trash.svg'
+
 import { colors } from '@/styles'
+
+import { styles } from './styles'
 
 interface Task {
   id: string
@@ -15,25 +17,34 @@ interface Task {
 
 interface TaskCardProps {
   task: Task
+  testID?: string
 }
 
-export const TaskCard: FC<TaskCardProps> = ({ task }) => {
-  const [isChecked, setIsChecked] = useState(task.done)
+export const TaskCard: FC<TaskCardProps> = ({ task, testID }) => {
+  const [isChecked, setIsChecked] = useState<boolean>(task.done)
+
+  const textDecorationLine: TextStyle['textDecorationLine'] = isChecked
+    ? 'line-through'
+    : 'none'
+  const textColor: TextStyle['color'] = isChecked
+    ? colors['gray-300']
+    : colors['gray-100']
 
   return (
-    <View style={styles.container}>
+    <View testID={testID} style={styles.container}>
       <CheckBox
         onValueChange={(value) => setIsChecked(value)}
         value={isChecked}
-        aria-labelledby="checkbox"
+        testID={`${testID}-checkbox`}
       />
 
       <Text
+        testID={`${testID}-text`}
         style={[
           styles.text,
           {
-            textDecorationLine: isChecked ? 'line-through' : 'none',
-            color: isChecked ? colors['gray-300'] : colors['gray-100'],
+            textDecorationLine,
+            color: textColor,
           },
         ]}
       >
