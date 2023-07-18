@@ -13,7 +13,7 @@ import { TaskCard } from './components/TaskCard'
 import { useHomeController } from './controller'
 
 export const Home: FC = () => {
-  const { control, handleSubmit, onSubmit, tasks } = useHomeController()
+  const { control, tasks, onSubmit, handleDeleteTask } = useHomeController()
 
   return (
     <View testID="screen-container" style={styles.container}>
@@ -34,7 +34,7 @@ export const Home: FC = () => {
           <TouchableOpacity
             style={styles.addButton}
             testID="submit-button"
-            onPress={handleSubmit(onSubmit)}
+            onPress={onSubmit}
           >
             <PlusCircle color={colors['gray-100']} weight="bold" size={24} />
           </TouchableOpacity>
@@ -64,7 +64,12 @@ export const Home: FC = () => {
         {!tasks.length && <EmptyFeedback testID="empty-feedback" />}
 
         {tasks.map((task) => (
-          <TaskCard key={task.id} task={task} testID="task-card" />
+          <TaskCard
+            key={task.id}
+            task={task}
+            testID="task-card"
+            onClickDelete={handleDeleteTask}
+          />
         ))}
       </View>
     </View>

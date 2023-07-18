@@ -67,6 +67,25 @@ describe('TaskCard Component', () => {
     })
   })
 
+  it('should call function onCh passign the task id as argument', () => {
+    const onClickDelete = jest.fn()
+
+    render(
+      <TaskCard
+        testID={rootTaskId}
+        task={task}
+        onClickDelete={onClickDelete}
+      />,
+    )
+
+    const btnDelete = screen.getByTestId(`${rootTaskId}-btn-delete`)
+
+    fireEvent.press(btnDelete)
+
+    expect(onClickDelete).toHaveBeenCalledTimes(1)
+    expect(onClickDelete).toHaveBeenCalledWith(task.id)
+  })
+
   it('should correctly and update the UI when call onValueChange callback', () => {
     jest
       .mocked(CheckBox)

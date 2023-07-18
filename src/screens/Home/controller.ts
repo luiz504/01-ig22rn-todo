@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { generateRandomId } from '@/utils/generateRandomId'
 
-interface Task {
+export interface Task {
   id: string
   description: string
   done: boolean
@@ -31,7 +31,7 @@ export const useHomeController = () => {
     },
   ])
 
-  const onSubmit = (data: FormCreateTask) => {
+  const onSubmit = handleSubmit((data: FormCreateTask) => {
     setTasks((old) =>
       old.concat({
         id: generateRandomId(),
@@ -40,14 +40,22 @@ export const useHomeController = () => {
       }),
     )
     setValue('description', '')
+  })
+
+  const handleDeleteTask = (id: string) => {
+    setTasks((old) => old.filter((old) => old.id !== id))
   }
+
+  const testMethods =
+    process.env.NODE_ENV === 'test'
+      ? { setTasks, setValue, getValues }
+      : undefined
 
   return {
     control,
-    setValue,
-    getValues,
-    handleSubmit,
-    onSubmit,
     tasks,
+    handleDeleteTask,
+    onSubmit,
+    ...testMethods,
   }
 }

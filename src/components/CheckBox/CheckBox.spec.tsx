@@ -5,7 +5,9 @@ import { colors } from '@/styles'
 
 describe('CheckBox Component', () => {
   it('should render correctly with default props / unchecked', () => {
-    render(<CheckBox testID="checkbox" onValueChange={() => {}} />)
+    render(
+      <CheckBox testID="checkbox" value={false} onValueChange={() => {}} />,
+    )
     const checkBox = screen.getByTestId('checkbox')
 
     expect(checkBox).toBeTruthy()

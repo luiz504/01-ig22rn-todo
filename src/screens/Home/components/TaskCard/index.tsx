@@ -18,9 +18,14 @@ interface Task {
 interface TaskCardProps {
   task: Task
   testID?: string
+  onClickDelete?: (id: string) => void
 }
 
-export const TaskCard: FC<TaskCardProps> = ({ task, testID }) => {
+export const TaskCard: FC<TaskCardProps> = ({
+  task,
+  testID,
+  onClickDelete,
+}) => {
   const [isChecked, setIsChecked] = useState<boolean>(task.done)
 
   const textDecorationLine: TextStyle['textDecorationLine'] = isChecked
@@ -51,7 +56,11 @@ export const TaskCard: FC<TaskCardProps> = ({ task, testID }) => {
         {task.description}
       </Text>
 
-      <TouchableOpacity style={styles.btnDelete}>
+      <TouchableOpacity
+        testID={`${testID}-btn-delete`}
+        style={styles.btnDelete}
+        onPress={() => onClickDelete?.(task.id)}
+      >
         <Trash />
       </TouchableOpacity>
     </View>
