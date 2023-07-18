@@ -11,7 +11,7 @@ interface CheckboxProps extends PressableProps {
 }
 
 export const CheckBox: FC<CheckboxProps> = ({
-  value = false,
+  value,
   size = 24,
   onValueChange,
   testID,

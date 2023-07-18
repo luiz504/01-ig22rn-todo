@@ -1,5 +1,5 @@
-import { FC, useRef, useState } from 'react'
-import { Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { FC } from 'react'
+import { Text, TouchableOpacity, View } from 'react-native'
 import { PlusCircle } from 'phosphor-react-native'
 
 import Logo from '@assets/logo-full.svg'
@@ -8,48 +8,12 @@ import { styles } from './styles'
 import { colors } from '@/styles'
 import { TaskInput } from './components/TaskInput'
 import { EmptyFeedback } from './components/EmptyFeedback'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { generateRandomId } from '@/utils/generateRandomId'
 import { TaskCard } from './components/TaskCard'
-interface Task {
-  id: string
-  description: string
-  done: boolean
-}
-
-const formCreateTaskSchema = z.object({
-  description: z.string().nonempty(),
-})
-type FormCreateTask = z.infer<typeof formCreateTaskSchema>
+import { useHomeController } from './controller'
 
 export const Home: FC = () => {
-  const inputRef = useRef<TextInput>(null)
-  const { control, handleSubmit, setValue } = useForm<FormCreateTask>({
-    resolver: zodResolver(formCreateTaskSchema),
-  })
-
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      description:
-        'Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet numquam at, nemo possimus impedit cumque ipsa dolorem officia accusamus minus qui perspiciatis aperiam, esse error alias sapiente ullam delectus eum?',
-      done: false,
-      id: '123123',
-    },
-  ])
-
-  const onSubmit = (data: FormCreateTask) => {
-    setTasks((old) =>
-      old.concat({
-        id: generateRandomId(),
-        description: data.description,
-        done: false,
-      }),
-    )
-    setValue('description', '')
-  }
+  const { control, handleSubmit, onSubmit, tasks } = useHomeController()
 
   return (
     <View testID="screen-container" style={styles.container}>
@@ -61,7 +25,6 @@ export const Home: FC = () => {
         {/** Search Row */}
         <View style={styles.inputRow}>
           <TaskInput
-            ref={inputRef}
             control={control}
             testID="input"
             placeholder="Add a new task"
@@ -70,7 +33,7 @@ export const Home: FC = () => {
 
           <TouchableOpacity
             style={styles.addButton}
-            testID="btn-add"
+            testID="submit-button"
             onPress={handleSubmit(onSubmit)}
           >
             <PlusCircle color={colors['gray-100']} weight="bold" size={24} />
@@ -98,10 +61,10 @@ export const Home: FC = () => {
           </View>
         </View>
 
-        {!tasks.length && <EmptyFeedback />}
+        {!tasks.length && <EmptyFeedback testID="empty-feedback" />}
 
         {tasks.map((task) => (
-          <TaskCard key={task.id} task={task} />
+          <TaskCard key={task.id} task={task} testID="task-card" />
         ))}
       </View>
     </View>

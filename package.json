@@ -8,7 +8,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "test": "jest --detectOpenHandles",
+    "test": "jest",
     "test:watch": "jest --watch",
     "test:ci": "jest --coverage",
     "test:badges": "npm run test:ci && jest-coverage-badges --input coverage/coverage-summary.json --output __badges__",
@@ -32,7 +32,6 @@
     "react-hook-form": "^7.45.1",
     "react-native": "0.71.8",
     "react-native-svg": "13.4.0",
-    "styled-components": "^6.0.4",
     "zod": "^3.21.4"
   },
   "devDependencies": {
@@ -44,15 +43,11 @@
     "@types/jest": "^29.5.3",
     "@types/react": "~18.0.14",
     "@types/react-test-renderer": "^18.0.0",
-    "babel-plugin-styled-components": "^2.1.4",
     "eslint-plugin-testing-library": "^5.11.0",
     "husky": "^8.0.3",
     "jest-coverage-badges": "^1.1.2",
     "lint-staged": "^13.2.3",
     "react-native-svg-transformer": "^1.0.0",
     "typescript": "^4.9.4"
-  },
-  "resolutions": {
-    "styled-components": "^5"
   }
 }
