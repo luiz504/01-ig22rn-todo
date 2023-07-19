@@ -13,7 +13,7 @@ jest.mock('react-hook-form', () => ({
     .mockReturnValue({ field: { onChange: jest.fn() } as any } as any),
 }))
 
-describe('Test With No Mocks', () => {
+describe('Home Component', () => {
   describe('Tests with mocked modules', () => {
     it('should render the TaskCard Correctly', () => {
       jest.mocked(useHomeController).mockReturnValue({
@@ -22,11 +22,9 @@ describe('Test With No Mocks', () => {
         tasks: [],
       } as any)
       render(<Home />)
-
       expect(screen.getByTestId('empty-feedback')).toBeTruthy()
       expect(screen.queryByTestId('task-card')).not.toBeTruthy()
     })
-
     it('should render the TasksCard related with tasks variable', () => {
       jest.mocked(useHomeController).mockReturnValue({
         control: {} as any,
@@ -37,18 +35,13 @@ describe('Test With No Mocks', () => {
         ],
       } as any)
       render(<Home />)
-
       expect(screen.queryByTestId('empty-feedback')).not.toBeTruthy()
       expect(screen.getAllByTestId('task-card')).toHaveLength(2)
       expect(screen.getAllByText('Task Fake 1')).toHaveLength(1)
       expect(screen.getAllByText('Task Fake 2')).toHaveLength(1)
     })
   })
-
   describe('Test with pure modules', () => {
-    beforeAll(() => {
-      jest.resetModules()
-    })
     it('should render correctly', () => {
       render(<Home />)
 

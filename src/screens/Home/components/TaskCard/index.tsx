@@ -1,5 +1,12 @@
-import { FC, useState } from 'react'
-import { Text, TextStyle, TouchableOpacity, View } from 'react-native'
+import { FC, useMemo } from 'react'
+import {
+  Dimensions,
+  Text,
+  TextStyle,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from 'react-native'
 
 import Trash from '@assets/trash.svg'
 
@@ -19,14 +26,16 @@ interface TaskCardProps {
   task: Task
   testID?: string
   onClickDelete?: (id: string) => void
+  onClickCheck?: (id: string, value: boolean) => void
 }
 
 export const TaskCard: FC<TaskCardProps> = ({
   task,
   testID,
   onClickDelete,
+  onClickCheck,
 }) => {
-  const [isChecked, setIsChecked] = useState<boolean>(task.done)
+  const isChecked = task.done
 
   const textDecorationLine: TextStyle['textDecorationLine'] = isChecked
     ? 'line-through'
@@ -34,11 +43,25 @@ export const TaskCard: FC<TaskCardProps> = ({
   const textColor: TextStyle['color'] = isChecked
     ? colors['gray-300']
     : colors['gray-100']
+  const backgroundColor: ViewStyle['backgroundColor'] = isChecked
+    ? colors['gray-500']
+    : colors['gray-400']
+
+  const minWidth768 = useMemo(() => {
+    return Dimensions.get('window').width >= 768
+  }, [])
 
   return (
-    <View testID={testID} style={styles.container}>
+    <View
+      testID={testID}
+      style={[
+        styles.container,
+        { backgroundColor },
+        minWidth768 && styles.containerLarger,
+      ]}
+    >
       <CheckBox
-        onValueChange={(value) => setIsChecked(value)}
+        onValueChange={(value) => onClickCheck?.(task.id, value)}
         value={isChecked}
         testID={`${testID}-checkbox`}
       />

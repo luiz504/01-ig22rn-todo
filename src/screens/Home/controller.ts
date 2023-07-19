@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { generateRandomId } from '@/utils/generateRandomId'
+import { TextInput } from 'react-native'
 
 export interface Task {
   id: string
@@ -22,6 +23,7 @@ export const useHomeController = () => {
       resolver: zodResolver(formCreateTaskSchema),
     })
 
+  const inputRef = useRef<TextInput>(null)
   const [tasks, setTasks] = useState<Task[]>([
     {
       description:
@@ -31,19 +33,32 @@ export const useHomeController = () => {
     },
   ])
 
+  const tasksCreated = tasks.length
+  const tasksDone = tasks.filter((task) => task.done).length
+
   const onSubmit = handleSubmit((data: FormCreateTask) => {
-    setTasks((old) =>
-      old.concat({
-        id: generateRandomId(),
-        description: data.description,
-        done: false,
-      }),
-    )
+    const newTask = {
+      id: generateRandomId(),
+      description: data.description,
+      done: false,
+    }
+    setTasks((old) => [newTask, ...old])
     setValue('description', '')
+    inputRef.current?.blur()
   })
 
   const handleDeleteTask = (id: string) => {
     setTasks((old) => old.filter((old) => old.id !== id))
+  }
+
+  const handleCheckTask = (id: string, value: boolean) => {
+    const isChecked = !!tasks.find((task) => task.id === id)?.done
+
+    if (typeof isChecked === 'boolean' && isChecked !== value) {
+      setTasks((old) =>
+        old.map((item) => (item.id === id ? { ...item, done: value } : item)),
+      )
+    }
   }
 
   const testMethods =
@@ -53,8 +68,12 @@ export const useHomeController = () => {
 
   return {
     control,
+    inputRef,
     tasks,
+    tasksCreated,
+    tasksDone,
     handleDeleteTask,
+    handleCheckTask,
     onSubmit,
     ...testMethods,
   }

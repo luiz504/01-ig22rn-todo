@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react-native'
 import { TaskCard } from '.'
 import { colors } from '@/styles'
-import { CheckBox } from '@/components/CheckBox'
+import * as CheckBoxModule from '@/components/CheckBox'
 
 const task = {
   id: 'task-fake-1',
@@ -10,26 +10,18 @@ const task = {
 }
 const rootTaskId = 'task-card'
 
-jest.mock('@/components/CheckBox', () => ({
-  CheckBox: jest.fn(),
-}))
-
 describe('TaskCard Component', () => {
-  beforeEach(() => {
-    jest.mocked(CheckBox).mockReset()
-  })
-
   it('should render Correctly Unhecked', () => {
+    const checkboxSpy = jest.spyOn(CheckBoxModule, 'CheckBox')
     render(<TaskCard testID={rootTaskId} task={task} />)
 
     const taskCard = screen.getByTestId('task-card')
     const text = screen.getByTestId(`${rootTaskId}-text`)
 
     expect(taskCard).toBeTruthy()
-    expect(CheckBox).toHaveBeenCalledTimes(1)
 
-    const CheckBoxMock = jest.mocked(CheckBox)
-    const { value, onValueChange } = CheckBoxMock.mock.calls[0][0]
+    expect(checkboxSpy).toHaveBeenCalledTimes(1)
+    const { value, onValueChange } = checkboxSpy.mock.calls[0][0]
 
     expect(value).toBe(false)
     expect(onValueChange).toBeInstanceOf(Function)
@@ -41,19 +33,22 @@ describe('TaskCard Component', () => {
       fontSize: 14,
       lineHeight: 20,
     })
+
+    checkboxSpy.mockRestore()
   })
 
   it('should render Correctly Checked', () => {
+    const checkboxSpy = jest.spyOn(CheckBoxModule, 'CheckBox')
+
     render(<TaskCard testID={rootTaskId} task={{ ...task, done: true }} />)
 
     const taskCard = screen.getByTestId('task-card')
     const text = screen.getByTestId(`${rootTaskId}-text`)
 
     expect(taskCard).toBeTruthy()
-    expect(CheckBox).toHaveBeenCalledTimes(1)
 
-    const CheckBoxMock = jest.mocked(CheckBox)
-    const { value, onValueChange } = CheckBoxMock.mock.calls[0][0]
+    expect(checkboxSpy).toHaveBeenCalledTimes(1)
+    const { value, onValueChange } = checkboxSpy.mock.calls[0][0]
 
     expect(value).toBe(true)
     expect(onValueChange).toBeInstanceOf(Function)
@@ -65,6 +60,8 @@ describe('TaskCard Component', () => {
       fontSize: 14,
       lineHeight: 20,
     })
+
+    checkboxSpy.mockRestore()
   })
 
   it('should call function onCh passign the task id as argument', () => {
@@ -86,12 +83,16 @@ describe('TaskCard Component', () => {
     expect(onClickDelete).toHaveBeenCalledWith(task.id)
   })
 
-  it('should correctly and update the UI when call onValueChange callback', () => {
-    jest
-      .mocked(CheckBox)
-      .mockImplementation(jest.requireActual('@/components/CheckBox').CheckBox)
+  it('should call onClickCheck callback passing the correct arguments', () => {
+    const onClickCheckMocked = jest.fn()
 
-    render(<TaskCard testID={rootTaskId} task={task} />)
+    render(
+      <TaskCard
+        testID={rootTaskId}
+        task={task}
+        onClickCheck={onClickCheckMocked}
+      />,
+    )
 
     const text = screen.getByTestId(`${rootTaskId}-text`)
 
@@ -104,16 +105,25 @@ describe('TaskCard Component', () => {
 
     fireEvent.press(checkbox)
 
-    expect(text).toHaveStyle({
-      color: colors['gray-300'],
-      textDecorationLine: 'line-through',
-    })
+    expect(onClickCheckMocked).toHaveBeenCalledTimes(1)
+    expect(onClickCheckMocked).toHaveBeenCalledWith(task.id, !task.done)
+  })
 
-    fireEvent.press(checkbox)
+  it('should call  onClickDelete callback passing the correct arguments', () => {
+    const onClickDeleteMocked = jest.fn()
 
-    expect(text).toHaveStyle({
-      color: colors['gray-100'],
-      textDecorationLine: 'none',
-    })
+    render(
+      <TaskCard
+        testID={rootTaskId}
+        task={task}
+        onClickDelete={onClickDeleteMocked}
+      />,
+    )
+    const btnDelete = screen.getByTestId(`${rootTaskId}-btn-delete`)
+
+    fireEvent.press(btnDelete)
+
+    expect(onClickDeleteMocked).toBeCalledTimes(1)
+    expect(onClickDeleteMocked).toHaveBeenCalledWith(task.id)
   })
 })

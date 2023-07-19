@@ -6,13 +6,17 @@ export const styles = RN.StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingTop: 30,
+    paddingTop: 50,
     paddingBottom: 70,
     paddingHorizontal: 16,
 
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
+  },
+  headerTall: {
+    paddingTop: 70,
+    paddingBottom: 70,
   },
   body: {
     position: 'relative',
