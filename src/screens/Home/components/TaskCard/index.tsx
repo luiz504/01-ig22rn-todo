@@ -37,15 +37,16 @@ export const TaskCard: FC<TaskCardProps> = ({
 }) => {
   const isChecked = task.done
 
+  const borderColor: ViewStyle['borderColor'] = isChecked
+    ? colors['gray-500']
+    : colors['gray-400']
+
   const textDecorationLine: TextStyle['textDecorationLine'] = isChecked
     ? 'line-through'
     : 'none'
   const textColor: TextStyle['color'] = isChecked
     ? colors['gray-300']
     : colors['gray-100']
-  const backgroundColor: ViewStyle['backgroundColor'] = isChecked
-    ? colors['gray-500']
-    : colors['gray-400']
 
   const minWidth768 = useMemo(() => {
     return Dimensions.get('window').width >= 768
@@ -56,7 +57,9 @@ export const TaskCard: FC<TaskCardProps> = ({
       testID={testID}
       style={[
         styles.container,
-        { backgroundColor },
+        {
+          borderColor,
+        },
         minWidth768 && styles.containerLarger,
       ]}
     >

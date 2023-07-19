@@ -1,3 +1,4 @@
+import { colors } from '@/styles'
 import { StyleSheet } from 'react-native'
 
 export const styles = StyleSheet.create({
@@ -9,6 +10,8 @@ export const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingLeft: 12,
     paddingRight: 8,
+    borderWidth: 2,
+    backgroundColor: colors['gray-500'],
   },
   containerLarger: {
     paddingVertical: 16,

@@ -2,6 +2,8 @@ import { fireEvent, render, screen } from '@testing-library/react-native'
 import { TaskCard } from '.'
 import { colors } from '@/styles'
 import * as CheckBoxModule from '@/components/CheckBox'
+import { Dimensions } from 'react-native'
+import { styles } from './styles'
 
 const task = {
   id: 'task-fake-1',
@@ -125,5 +127,19 @@ describe('TaskCard Component', () => {
 
     expect(onClickDeleteMocked).toBeCalledTimes(1)
     expect(onClickDeleteMocked).toHaveBeenCalledWith(task.id)
+  })
+
+  it('should apply some styles when the width is greater than 768 units', () => {
+    const minWidthSpy = jest.spyOn(Dimensions, 'get')
+
+    minWidthSpy.mockImplementation(() => ({ width: 800 }) as any)
+
+    render(<TaskCard testID={rootTaskId} task={task} />)
+
+    const taskCard = screen.getByTestId('task-card')
+
+    expect(taskCard).toHaveStyle(styles.containerLarger)
+
+    minWidthSpy.mockRestore()
   })
 })

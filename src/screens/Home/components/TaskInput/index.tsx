@@ -20,6 +20,7 @@ export const TaskInput = forwardRef<TextInput, TaskInputProps>(
       <TextInput
         ref={ref}
         {...rest}
+        keyboardAppearance="dark"
         onFocus={(e) => {
           setIsFocused(true)
           onFocus?.(e)
