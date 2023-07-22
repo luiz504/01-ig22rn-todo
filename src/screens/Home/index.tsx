@@ -1,38 +1,25 @@
-import { FC, useMemo } from 'react'
-import {
-  Dimensions,
-  FlatList,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+import { FlatList, Text, TouchableOpacity, View } from 'react-native'
 import { PlusCircle } from 'phosphor-react-native'
 
 import Logo from '@assets/logo-full.svg'
 
 import { styles } from './styles'
 import { colors } from '@/styles'
+
 import { TaskInput } from './components/TaskInput'
 import { EmptyFeedback } from './components/EmptyFeedback'
-
 import { TaskCard } from './components/TaskCard'
+
 import { useHomeController } from './controller'
+import { useTasksContext } from '@/context/tasksContext'
 
-export const Home: FC = () => {
-  const {
-    control,
-    inputRef,
-    tasks,
-    tasksCreated,
-    tasksDone,
-    onSubmit,
-    handleDeleteTask,
-    handleCheckTask,
-  } = useHomeController()
+export const Home = () => {
+  const { control, inputRef, onSubmit, minHeight850 } = useHomeController()
 
-  const minHeight850 = useMemo(() => {
-    return Dimensions.get('window').height >= 850
-  }, [])
+  const tasks = useTasksContext().tasks
+  const tasksCreated = useTasksContext().tasksCreated
+  const tasksDone = useTasksContext().tasksDone
+  const isLoading = useTasksContext().isLoading
 
   return (
     <View testID="screen-container" style={styles.container}>
@@ -87,15 +74,9 @@ export const Home: FC = () => {
           data={tasks}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ rowGap: 8 }}
-          renderItem={({ item }) => (
-            <TaskCard
-              task={item}
-              testID="task-card"
-              onClickDelete={handleDeleteTask}
-              onClickCheck={handleCheckTask}
-            />
-          )}
+          renderItem={({ item }) => <TaskCard task={item} testID="task-card" />}
         />
+        {isLoading && <Text> Loading ...</Text>}
       </View>
     </View>
   )

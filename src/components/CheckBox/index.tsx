@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { PressableProps, StyleSheet, TouchableHighlight } from 'react-native'
+import { PressableProps, StyleSheet, TouchableOpacity } from 'react-native'
 import { Check } from 'phosphor-react-native'
 
 import { colors } from '@/styles'
@@ -11,30 +11,25 @@ interface CheckboxProps extends PressableProps {
 }
 
 export const CheckBox: FC<CheckboxProps> = ({
-  value,
+  value: isChecked,
   size = 24,
   onValueChange,
   testID,
 }) => {
-  const borderColor = value ? colors['purple-dark'] : colors['blue-light']
-  const backgroundColor = value ? colors['purple-dark'] : 'transparent'
-
-  const showCheckIcon = value ? 1 : 0
+  const showCheckIcon = isChecked ? 1 : 0
   const iconSize = size / 1.5
 
   return (
-    <TouchableHighlight
+    <TouchableOpacity
       style={[
         styles.container,
+        isChecked && styles.containerChecked,
         {
           height: size,
           width: size,
-          borderRadius: 9999,
-          borderColor,
-          backgroundColor,
         },
       ]}
-      onPress={() => onValueChange?.(!value)}
+      onPress={() => onValueChange?.(!isChecked)}
       testID={testID}
     >
       <Check
@@ -43,14 +38,22 @@ export const CheckBox: FC<CheckboxProps> = ({
         weight="bold"
         size={iconSize}
       />
-    </TouchableHighlight>
+    </TouchableOpacity>
   )
 }
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     borderWidth: 2,
+    borderRadius: 9999,
     alignItems: 'center',
     justifyContent: 'center',
+
+    borderColor: colors['blue-light'],
+    backgroundColor: 'transparent',
+  },
+  containerChecked: {
+    borderColor: colors['purple-dark'],
+    backgroundColor: colors['purple-dark'],
   },
 })

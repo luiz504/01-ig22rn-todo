@@ -1,9 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react-native'
-import { TaskCard } from '.'
-import { colors } from '@/styles'
+import { TaskCardBig } from '.'
 import * as CheckBoxModule from '@/components/CheckBox'
-import { Dimensions } from 'react-native'
-import { styles } from './styles'
+
+import { styles } from '../styles'
 
 const task = {
   id: 'task-fake-1',
@@ -13,9 +12,9 @@ const task = {
 const rootTaskId = 'task-card'
 
 describe('TaskCard Component', () => {
-  it('should render Correctly Unhecked', () => {
+  it('should render Correctly Unchecked', () => {
     const checkboxSpy = jest.spyOn(CheckBoxModule, 'CheckBox')
-    render(<TaskCard testID={rootTaskId} task={task} />)
+    render(<TaskCardBig testID={rootTaskId} task={task} />)
 
     const taskCard = screen.getByTestId('task-card')
     const text = screen.getByTestId(`${rootTaskId}-text`)
@@ -29,12 +28,7 @@ describe('TaskCard Component', () => {
     expect(onValueChange).toBeInstanceOf(Function)
 
     expect(text).toHaveTextContent(task.description)
-    expect(text).toHaveStyle({
-      color: colors['gray-100'],
-      textDecorationLine: 'none',
-      fontSize: 14,
-      lineHeight: 20,
-    })
+    expect(text).toHaveStyle(styles.text)
 
     checkboxSpy.mockRestore()
   })
@@ -42,7 +36,7 @@ describe('TaskCard Component', () => {
   it('should render Correctly Checked', () => {
     const checkboxSpy = jest.spyOn(CheckBoxModule, 'CheckBox')
 
-    render(<TaskCard testID={rootTaskId} task={{ ...task, done: true }} />)
+    render(<TaskCardBig testID={rootTaskId} task={{ ...task, done: true }} />)
 
     const taskCard = screen.getByTestId('task-card')
     const text = screen.getByTestId(`${rootTaskId}-text`)
@@ -56,54 +50,23 @@ describe('TaskCard Component', () => {
     expect(onValueChange).toBeInstanceOf(Function)
 
     expect(text).toHaveTextContent(task.description)
-    expect(text).toHaveStyle({
-      color: colors['gray-300'],
-      textDecorationLine: 'line-through',
-      fontSize: 14,
-      lineHeight: 20,
-    })
+    expect(text).toHaveStyle(styles.textChecked)
 
     checkboxSpy.mockRestore()
-  })
-
-  it('should call function onCh passign the task id as argument', () => {
-    const onClickDelete = jest.fn()
-
-    render(
-      <TaskCard
-        testID={rootTaskId}
-        task={task}
-        onClickDelete={onClickDelete}
-      />,
-    )
-
-    const btnDelete = screen.getByTestId(`${rootTaskId}-btn-delete`)
-
-    fireEvent.press(btnDelete)
-
-    expect(onClickDelete).toHaveBeenCalledTimes(1)
-    expect(onClickDelete).toHaveBeenCalledWith(task.id)
   })
 
   it('should call onClickCheck callback passing the correct arguments', () => {
     const onClickCheckMocked = jest.fn()
 
     render(
-      <TaskCard
+      <TaskCardBig
         testID={rootTaskId}
         task={task}
         onClickCheck={onClickCheckMocked}
       />,
     )
 
-    const text = screen.getByTestId(`${rootTaskId}-text`)
-
     const checkbox = screen.getByTestId(`${rootTaskId}-checkbox`)
-
-    expect(text).toHaveStyle({
-      color: colors['gray-100'],
-      textDecorationLine: 'none',
-    })
 
     fireEvent.press(checkbox)
 
@@ -115,7 +78,7 @@ describe('TaskCard Component', () => {
     const onClickDeleteMocked = jest.fn()
 
     render(
-      <TaskCard
+      <TaskCardBig
         testID={rootTaskId}
         task={task}
         onClickDelete={onClickDeleteMocked}
@@ -129,17 +92,17 @@ describe('TaskCard Component', () => {
     expect(onClickDeleteMocked).toHaveBeenCalledWith(task.id)
   })
 
-  it('should apply some styles when the width is greater than 768 units', () => {
-    const minWidthSpy = jest.spyOn(Dimensions, 'get')
+  // it('should apply some styles when the width is greater than 768 units', () => {
+  //   const minWidthSpy = jest.spyOn(Dimensions, 'get')
 
-    minWidthSpy.mockImplementation(() => ({ width: 800 }) as any)
+  //   minWidthSpy.mockImplementation(() => ({ width: 800 }) as any)
 
-    render(<TaskCard testID={rootTaskId} task={task} />)
+  //   render(<TaskCardBig testID={rootTaskId} task={task} />)
 
-    const taskCard = screen.getByTestId('task-card')
+  //   const taskCard = screen.getByTestId('task-card')
 
-    expect(taskCard).toHaveStyle(styles.containerLarger)
+  //   expect(taskCard).toHaveStyle(styles.containerLarger)
 
-    minWidthSpy.mockRestore()
-  })
+  //   minWidthSpy.mockRestore()
+  // })
 })

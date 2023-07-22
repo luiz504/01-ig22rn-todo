@@ -10,8 +10,13 @@ export const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingLeft: 12,
     paddingRight: 8,
-    borderWidth: 2,
     backgroundColor: colors['gray-500'],
+
+    borderWidth: 2,
+    borderColor: colors['gray-400'],
+  },
+  containerChecked: {
+    borderColor: colors['gray-500'],
   },
   containerLarger: {
     paddingVertical: 16,
@@ -19,8 +24,11 @@ export const styles = StyleSheet.create({
     paddingRight: 12,
     gap: 16,
   },
-  text: { fontSize: 14, lineHeight: 20, flex: 1 },
-
+  text: { fontSize: 14, lineHeight: 20, flex: 1, color: colors['gray-100'] },
+  textChecked: {
+    color: colors['gray-300'],
+    textDecorationLine: 'line-through',
+  },
   btnDelete: {
     marginLeft: 'auto',
   },

@@ -1,11 +1,16 @@
+import { useCallback } from 'react'
+import { StyleSheet } from 'react-native'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { StatusBar } from 'expo-status-bar'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { useFonts } from 'expo-font'
+import * as SplashScreen from 'expo-splash-screen'
 
 import { Home } from './src/screens/Home'
-import { SafeAreaView, StyleSheet } from 'react-native'
-import * as SplashScreen from 'expo-splash-screen'
-import { useFonts } from 'expo-font'
-import { useCallback } from 'react'
 import { colors } from './src/styles/colors'
+
+import { queryClient } from '@/libs/queryClient'
+import { TasksContextProvider } from '@/context/tasksContext'
 
 SplashScreen.preventAutoHideAsync()
 
@@ -22,18 +27,22 @@ export default function App() {
   if (!fontsLoaded) return null
 
   return (
-    <SafeAreaView
-      testID="app-container"
-      style={styles.container}
-      onLayout={onLayoutHRootView}
-    >
-      <StatusBar
-        style="light"
-        backgroundColor={colors['gray-700']}
-        translucent={false}
-      />
-      <Home />
-    </SafeAreaView>
+    <QueryClientProvider client={queryClient}>
+      <GestureHandlerRootView
+        testID="app-container"
+        style={styles.container}
+        onLayout={onLayoutHRootView}
+      >
+        <StatusBar
+          style="light"
+          backgroundColor={colors['gray-700']}
+          translucent={false}
+        />
+        <TasksContextProvider>
+          <Home />
+        </TasksContextProvider>
+      </GestureHandlerRootView>
+    </QueryClientProvider>
   )
 }
 
@@ -41,5 +50,6 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors['gray-700'],
     flex: 1,
+    overflow: 'hidden',
   },
 })

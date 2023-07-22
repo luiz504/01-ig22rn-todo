@@ -1,21 +1,17 @@
 import { fireEvent, render, screen } from '@testing-library/react-native'
-import { CheckBox } from '.'
+import { CheckBox, styles } from '.'
 import { Check } from 'phosphor-react-native'
 import { colors } from '@/styles'
 
 describe('CheckBox Component', () => {
+  const testId = 'checkbox'
+
   it('should render correctly with default props / unchecked', () => {
-    render(
-      <CheckBox testID="checkbox" value={false} onValueChange={() => {}} />,
-    )
-    const checkBox = screen.getByTestId('checkbox')
+    render(<CheckBox testID={testId} value={false} onValueChange={() => {}} />)
+    const checkBox = screen.getByTestId(testId)
 
     expect(checkBox).toBeTruthy()
-    expect(checkBox).toHaveStyle({
-      borderRadius: 9999,
-      borderColor: colors['blue-light'],
-      backgroundColor: 'transparent',
-    })
+    expect(checkBox).toHaveStyle(styles.container)
 
     const svg = screen.UNSAFE_getByType(Check)
 
@@ -23,13 +19,13 @@ describe('CheckBox Component', () => {
   })
 
   it('should render correctly checked', () => {
-    render(<CheckBox testID="checkbox" value={true} onValueChange={() => {}} />)
-    const checkBox = screen.getByTestId('checkbox')
+    render(<CheckBox testID={testId} value={true} onValueChange={() => {}} />)
+    const checkBox = screen.getByTestId(testId)
 
     expect(checkBox).toBeTruthy()
     expect(checkBox).toHaveStyle({
-      borderColor: colors['purple-dark'],
-      backgroundColor: colors['purple-dark'],
+      ...styles.container,
+      ...styles.containerChecked,
     })
 
     const svg = screen.UNSAFE_getByType(Check)
@@ -43,13 +39,13 @@ describe('CheckBox Component', () => {
     const onValueChangeMocked = jest.fn()
     render(
       <CheckBox
-        testID="checkbox"
+        testID={testId}
         value={false}
         onValueChange={onValueChangeMocked}
       />,
     )
 
-    const checkBox = screen.getByTestId('checkbox')
+    const checkBox = screen.getByTestId(testId)
 
     fireEvent.press(checkBox)
 
@@ -60,13 +56,13 @@ describe('CheckBox Component', () => {
     const onValueChangeMocked = jest.fn()
     render(
       <CheckBox
-        testID="checkbox"
+        testID={testId}
         value={true}
         onValueChange={onValueChangeMocked}
       />,
     )
 
-    const checkBox = screen.getByTestId('checkbox')
+    const checkBox = screen.getByTestId(testId)
 
     fireEvent.press(checkBox)
 

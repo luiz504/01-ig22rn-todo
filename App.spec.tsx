@@ -32,7 +32,7 @@ describe('App Component', () => {
     expect(statusBar?.props.translucent).toBe(false)
   })
 
-  it('should call SlapshScreen.hideAsync when fonts are loaded', async () => {
+  it('should call SplashScreen.hideAsync when fonts are loaded', async () => {
     useFontsMocked.mockReturnValueOnce([true, null])
     hideAsyncMocked.mockResolvedValueOnce(true)
     render(<App />)
