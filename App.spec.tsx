@@ -22,10 +22,12 @@ describe('App Component', () => {
 
   it('should render correctly when fonts loaded', () => {
     useFontsMocked.mockReturnValueOnce([true, null])
-    render(<App />)
-    expect(screen.getByTestId('app-container')).toBeTruthy()
-    const statusBar = screen.UNSAFE_queryByType(StatusBar)
 
+    render(<App />)
+
+    expect(screen.getByTestId('app-container')).toBeTruthy()
+
+    const statusBar = screen.UNSAFE_queryByType(StatusBar)
     expect(statusBar).toBeTruthy()
     expect(statusBar?.props.style).toBe('light')
     expect(statusBar?.props.backgroundColor).toBe('#0D0D0D')
@@ -38,13 +40,17 @@ describe('App Component', () => {
     render(<App />)
 
     await screen.getByTestId('app-container').props.onLayout()
+
     expect(hideAsyncMocked).toHaveBeenCalledTimes(1)
+
     hideAsyncMocked.mockRestore()
   })
   it('should not call SplashScreen.hideAsync when fonts are not loaded', async () => {
     useFontsMocked.mockReturnValueOnce([false, null])
     hideAsyncMocked.mockResolvedValueOnce(true)
+
     render(<App />)
+
     expect(hideAsyncMocked).not.toHaveBeenCalled()
   })
 })
