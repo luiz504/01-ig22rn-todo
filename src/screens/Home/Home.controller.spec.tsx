@@ -5,9 +5,8 @@ import { TasksContext } from '@/context/tasksContext'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { useController } from 'react-hook-form'
 
-import { queryClientTest } from '@/libs/queryClient'
-
 import { useHomeController } from './controller'
+import { queryClientTest } from '__mocks__/queryClient'
 
 jest.mock('react-hook-form', () => {
   const original = jest.requireActual('react-hook-form')
@@ -59,6 +58,7 @@ describe('useHomeController Hook', () => {
         control: result.current.control,
       }),
     )
+
     const taskName = 'task Fake 42'
     act(() => {
       useControllerResult.current.field.onChange(taskName)

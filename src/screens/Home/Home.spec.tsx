@@ -3,8 +3,8 @@ import React, { FC, ReactNode } from 'react'
 import { render, screen } from '@testing-library/react-native'
 import { QueryClientProvider } from '@tanstack/react-query'
 
-import { queryClientTest } from '@/libs/queryClient'
 import { TasksContextProvider } from '@/context/tasksContext'
+import { queryClientTest } from '__mocks__/queryClient'
 
 describe('Home Component', () => {
   beforeEach(() => {

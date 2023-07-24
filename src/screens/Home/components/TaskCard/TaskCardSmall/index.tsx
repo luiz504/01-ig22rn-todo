@@ -1,7 +1,12 @@
-import { FC } from 'react'
+import React, { FC, useRef } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { Swipeable } from 'react-native-gesture-handler'
+import {
+  PanGestureHandler,
+  TapGestureHandler,
+} from 'react-native-gesture-handler'
 import Animated, {
+  Easing,
+  useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -16,20 +21,7 @@ import { TaskCardProps } from '../types'
 
 import { colors } from '@/styles'
 
-const useRightActionAnimation = (progress: Animated.SharedValue<number>) => {
-  const rightActionStyle = useAnimatedStyle(() => {
-    const trans = progress.value * 0 // Adjust this value as needed
-    const opacity = withTiming(progress.value, {
-      duration: 50, // Adjust this value for the duration of the animation
-    })
-    return {
-      opacity,
-      transform: [{ translateX: -trans }],
-    }
-  })
-
-  return rightActionStyle
-}
+const THRESHOLD = 52
 
 export const TaskCardSmall: FC<TaskCardProps> = ({
   task,
@@ -39,64 +31,116 @@ export const TaskCardSmall: FC<TaskCardProps> = ({
 }) => {
   const isChecked = task.done
 
-  const progress = useSharedValue(0)
+  const panableRef = useRef<PanGestureHandler>(null)
+  const tapableRef = useRef<TapGestureHandler>(null)
 
-  const rightActionStyle = useRightActionAnimation(progress)
+  const translateX = useSharedValue(0)
+  const isTabEnabled = useSharedValue(!!translateX.value)
 
-  const onSwipeableOpen = () => {
-    progress.value = 1
+  const panGestureHandler = useAnimatedGestureHandler({
+    onStart: (_, ctx: { startX: number }) => {
+      ctx.startX = translateX.value
+    },
+    onActive: (event, ctx: { startX: number }) => {
+      const maxWidth = THRESHOLD // Adjust this value to limit the range of the swipe
+      const newX = ctx.startX + event.translationX
+      const clampedX = Math.min(Math.max(newX, -maxWidth), 0)
+
+      translateX.value = clampedX
+    },
+    onEnd: (event) => {
+      const OFFSET = 20
+      const toValue = event.translationX < -THRESHOLD + OFFSET ? -THRESHOLD : 0
+      translateX.value = withTiming(toValue, {
+        duration: 200, // Adjust the duration as needed
+        easing: Easing.inOut(Easing.ease),
+      })
+
+      if (translateX.value <= -THRESHOLD + OFFSET) {
+        isTabEnabled.value = true
+      }
+    },
+  })
+
+  const onTap = () => {
+    if (isTabEnabled.value) {
+      translateX.value = withTiming(0, {
+        duration: 200, // Adjust the duration as needed
+        easing: Easing.inOut(Easing.ease),
+      })
+      isTabEnabled.value = false
+    }
   }
 
-  const onSwipeableClose = () => {
-    progress.value = 0
-  }
+  const cardAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: translateX.value }],
+    }
+  })
 
-  const onPressDelete = () => {
+  const onDeletePress = () => {
     if (onClickDelete) {
       onClickDelete(task.id)
     }
   }
+
   return (
     <View style={[localStyles.wrapper, isChecked && styles.containerChecked]}>
-      <Swipeable
-        renderRightActions={() => (
-          <Animated.View
-            style={[rightActionStyle, { zIndex: 20, elevation: 20 }]}
-          >
-            <TouchableOpacity
-              style={[localStyles.btnDelete]}
-              onPress={onPressDelete}
-            >
-              <Trash />
-            </TouchableOpacity>
-          </Animated.View>
-        )}
-        onSwipeableOpen={onSwipeableOpen}
-        onSwipeableClose={onSwipeableClose}
-        useNativeAnimations={false}
-        overshootRight={false}
-        friction={2}
-        enableTrackpadTwoFingerGesture
-        rightThreshold={64}
+      <Animated.View
+        style={[
+          {
+            ...StyleSheet.absoluteFillObject,
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+          },
+        ]}
       >
-        <View testID={testID} style={[localStyles.viewSection]}>
-          <CheckBox
-            onValueChange={(value) => onClickCheck?.(task.id, value)}
-            value={isChecked}
-            testID={`${testID}-checkbox`}
-          />
+        <TouchableOpacity
+          style={[localStyles.btnDelete]}
+          onPress={onDeletePress}
+        >
+          <Trash />
+        </TouchableOpacity>
+      </Animated.View>
 
-          <Text
-            testID={`${testID}-text`}
-            style={[styles.text, isChecked && styles.textChecked]}
-          >
-            {task.description}
-          </Text>
-        </View>
-      </Swipeable>
+      <PanGestureHandler
+        ref={panableRef}
+        simultaneousHandlers={[tapableRef]}
+        waitFor={panableRef}
+        onGestureEvent={panGestureHandler}
+      >
+        <Animated.View
+          testID={testID}
+          style={[cardAnimatedStyle, localStyles.swipableRow]}
+        >
+          <View style={[localStyles.checkBoxSection]}>
+            <CheckBox
+              onValueChange={(value) => onClickCheck?.(task.id, value)}
+              value={isChecked}
+              testID={`${testID}-checkbox`}
+            />
+          </View>
+
+          <TapGestureHandler ref={tapableRef} onHandlerStateChange={onTap}>
+            <View style={[localStyles.textSection]} pointerEvents="box-none">
+              <Text
+                testID={`${testID}-text`}
+                style={[
+                  styles.text,
+                  { flexShrink: 1 },
+                  isChecked && styles.textChecked,
+                ]}
+              >
+                {task.description}
+              </Text>
+            </View>
+          </TapGestureHandler>
+        </Animated.View>
+      </PanGestureHandler>
     </View>
   )
 }
+
 const localStyles = StyleSheet.create({
   wrapper: {
     borderWidth: 2,
@@ -104,18 +148,26 @@ const localStyles = StyleSheet.create({
     borderRadius: 8,
     overflow: 'hidden',
   },
-  viewSection: {
+  swipableRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    backgroundColor: colors['gray-500'],
+    overflow: 'hidden',
+  },
+  checkBoxSection: {
     paddingVertical: 12,
     paddingLeft: 12,
+  },
+  textSection: {
+    paddingVertical: 12,
     paddingRight: 8,
+    flex: 1,
   },
   btnDelete: {
     height: '100%',
     justifyContent: 'center',
     padding: 12,
-    backgroundColor: colors['gray-500'],
+    backgroundColor: colors['gray-400'],
   },
 })
