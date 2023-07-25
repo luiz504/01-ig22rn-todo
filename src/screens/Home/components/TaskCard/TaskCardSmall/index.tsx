@@ -85,7 +85,10 @@ export const TaskCardSmall: FC<TaskCardProps> = ({
   }
 
   return (
-    <View style={[localStyles.wrapper, isChecked && styles.containerChecked]}>
+    <View
+      testID={`${testID}-small`}
+      style={[localStyles.wrapper, isChecked && styles.containerChecked]}
+    >
       <Animated.View
         style={[
           {
@@ -109,10 +112,7 @@ export const TaskCardSmall: FC<TaskCardProps> = ({
         waitFor={panableRef}
         onGestureEvent={panGestureHandler}
       >
-        <Animated.View
-          testID={testID}
-          style={[cardAnimatedStyle, localStyles.swipableRow]}
-        >
+        <Animated.View style={[cardAnimatedStyle, localStyles.swipableRow]}>
           <View style={[localStyles.checkBoxSection]}>
             <CheckBox
               onValueChange={(value) => onClickCheck?.(task.id, value)}

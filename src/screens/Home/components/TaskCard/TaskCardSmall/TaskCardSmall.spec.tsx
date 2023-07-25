@@ -16,7 +16,7 @@ describe('TaskCard Component', () => {
     const checkboxSpy = jest.spyOn(CheckBoxModule, 'CheckBox')
     render(<TaskCardSmall testID={rootTaskId} task={task} />)
 
-    const taskCard = screen.getByTestId('task-card')
+    const taskCard = screen.getByTestId(`${rootTaskId}-small`)
     const text = screen.getByTestId(`${rootTaskId}-text`)
 
     expect(taskCard).toBeTruthy()
@@ -38,7 +38,7 @@ describe('TaskCard Component', () => {
 
     render(<TaskCardSmall testID={rootTaskId} task={{ ...task, done: true }} />)
 
-    const taskCard = screen.getByTestId('task-card')
+    const taskCard = screen.getByTestId(`${rootTaskId}-small`)
     const text = screen.getByTestId(`${rootTaskId}-text`)
 
     expect(taskCard).toBeTruthy()
@@ -73,22 +73,4 @@ describe('TaskCard Component', () => {
     expect(onClickCheckMocked).toHaveBeenCalledTimes(1)
     expect(onClickCheckMocked).toHaveBeenCalledWith(task.id, !task.done)
   })
-
-  // it('should call  onClickDelete callback passing the correct arguments', () => {
-  //   const onClickDeleteMocked = jest.fn()
-
-  //   render(
-  //     <TaskCardSmall
-  //       testID={rootTaskId}
-  //       task={task}
-  //       onClickDelete={onClickDeleteMocked}
-  //     />,
-  //   )
-  //   const btnDelete = screen.getByTestId(`${rootTaskId}-btn-delete`)
-
-  //   fireEvent.press(btnDelete)
-
-  //   expect(onClickDeleteMocked).toBeCalledTimes(1)
-  //   expect(onClickDeleteMocked).toHaveBeenCalledWith(task.id)
-  // })
 })

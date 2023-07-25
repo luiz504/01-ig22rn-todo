@@ -2,6 +2,7 @@ import React, { FC, createContext, useContext } from 'react'
 
 import { Task, useTasksQueries } from '@/hooks/useTasksQueries'
 import { generateRandomId } from '@/utils/generateRandomId'
+import { deepClone } from '@/utils/deepClone'
 
 type TasksContextType = {
   tasks: Task[]
@@ -10,9 +11,9 @@ type TasksContextType = {
   isLoading: boolean
   handleCreateTask: (data: { description: string }) => Promise<void>
   isCreating: boolean
-  handleDeleteTask: (id: string) => void
+  handleDeleteTask: (id: string) => Promise<void>
   isDeleting: boolean
-  handleUpdateTaskStatus: (id: string, value: boolean) => void
+  handleUpdateTaskStatus: (id: string, value: boolean) => Promise<void>
   isUpdating: boolean
 }
 
@@ -48,25 +49,23 @@ export const TasksContextProvider: FC<TasksContextProviderProps> = ({
     await addTaskMutation.mutateAsync([newTasks, ...tasks])
   }
 
-  const handleDeleteTask: TasksContextType['handleDeleteTask'] = (id) => {
+  const handleDeleteTask: TasksContextType['handleDeleteTask'] = async (id) => {
     const updatedTasks = tasks.filter((task) => task.id !== id)
-    deleteTaskMutation.mutateAsync(updatedTasks)
+    await deleteTaskMutation.mutateAsync(updatedTasks)
   }
 
-  const handleUpdateTaskStatus: TasksContextType['handleUpdateTaskStatus'] = (
-    id,
-    value,
-  ) => {
-    const taskIndex = tasks.findIndex((task) => task.id === id)
-    const task = tasks[taskIndex]
+  const handleUpdateTaskStatus: TasksContextType['handleUpdateTaskStatus'] =
+    async (id, value) => {
+      const taskIndex = tasks.findIndex((task) => task.id === id)
+      const task = tasks[taskIndex]
 
-    if (task && task.done === !value) {
-      const updatedTasks = [...tasks]
-      updatedTasks[taskIndex].done = value
+      if (task && task.done === !value) {
+        const updatedTasks = deepClone(tasks)
+        updatedTasks[taskIndex].done = value
 
-      updateTaskStatusMutation.mutateAsync(updatedTasks)
+        await updateTaskStatusMutation.mutateAsync(updatedTasks)
+      }
     }
-  }
 
   const tasksCreated = tasks.length
   const tasksDone = tasks.filter((task) => task.done).length

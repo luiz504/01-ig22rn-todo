@@ -16,7 +16,7 @@ describe('TaskCard Component', () => {
     const checkboxSpy = jest.spyOn(CheckBoxModule, 'CheckBox')
     render(<TaskCardBig testID={rootTaskId} task={task} />)
 
-    const taskCard = screen.getByTestId('task-card')
+    const taskCard = screen.getByTestId(`${rootTaskId}-big`)
     const text = screen.getByTestId(`${rootTaskId}-text`)
 
     expect(taskCard).toBeTruthy()
@@ -38,7 +38,7 @@ describe('TaskCard Component', () => {
 
     render(<TaskCardBig testID={rootTaskId} task={{ ...task, done: true }} />)
 
-    const taskCard = screen.getByTestId('task-card')
+    const taskCard = screen.getByTestId(`${rootTaskId}-big`)
     const text = screen.getByTestId(`${rootTaskId}-text`)
 
     expect(taskCard).toBeTruthy()
@@ -91,18 +91,4 @@ describe('TaskCard Component', () => {
     expect(onClickDeleteMocked).toBeCalledTimes(1)
     expect(onClickDeleteMocked).toHaveBeenCalledWith(task.id)
   })
-
-  // it('should apply some styles when the width is greater than 768 units', () => {
-  //   const minWidthSpy = jest.spyOn(Dimensions, 'get')
-
-  //   minWidthSpy.mockImplementation(() => ({ width: 800 }) as any)
-
-  //   render(<TaskCardBig testID={rootTaskId} task={task} />)
-
-  //   const taskCard = screen.getByTestId('task-card')
-
-  //   expect(taskCard).toHaveStyle(styles.containerLarger)
-
-  //   minWidthSpy.mockRestore()
-  // })
 })
