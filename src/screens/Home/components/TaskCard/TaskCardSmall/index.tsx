@@ -1,16 +1,10 @@
-import React, { FC, useRef } from 'react'
+import React, { FC } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import {
   PanGestureHandler,
   TapGestureHandler,
 } from 'react-native-gesture-handler'
-import Animated, {
-  Easing,
-  useAnimatedGestureHandler,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated'
+import Animated from 'react-native-reanimated'
 
 import { CheckBox } from '@/components/CheckBox'
 import Trash from '@assets/trash.svg'
@@ -20,8 +14,7 @@ import { styles } from '../styles'
 import { TaskCardProps } from '../types'
 
 import { colors } from '@/styles'
-
-const THRESHOLD = 52
+import { useTaskCardSmallController } from './controller'
 
 export const TaskCardSmall: FC<TaskCardProps> = ({
   task,
@@ -31,57 +24,16 @@ export const TaskCardSmall: FC<TaskCardProps> = ({
 }) => {
   const isChecked = task.done
 
-  const panableRef = useRef<PanGestureHandler>(null)
-  const tapableRef = useRef<TapGestureHandler>(null)
-
-  const translateX = useSharedValue(0)
-  const isTabEnabled = useSharedValue(!!translateX.value)
-
-  const panGestureHandler = useAnimatedGestureHandler({
-    onStart: (_, ctx: { startX: number }) => {
-      ctx.startX = translateX.value
-    },
-    onActive: (event, ctx: { startX: number }) => {
-      const maxWidth = THRESHOLD // Adjust this value to limit the range of the swipe
-      const newX = ctx.startX + event.translationX
-      const clampedX = Math.min(Math.max(newX, -maxWidth), 0)
-
-      translateX.value = clampedX
-    },
-    onEnd: (event) => {
-      const OFFSET = 20
-      const toValue = event.translationX < -THRESHOLD + OFFSET ? -THRESHOLD : 0
-      translateX.value = withTiming(toValue, {
-        duration: 200, // Adjust the duration as needed
-        easing: Easing.inOut(Easing.ease),
-      })
-
-      if (translateX.value <= -THRESHOLD + OFFSET) {
-        isTabEnabled.value = true
-      }
-    },
-  })
-
-  const onTap = () => {
-    if (isTabEnabled.value) {
-      translateX.value = withTiming(0, {
-        duration: 200, // Adjust the duration as needed
-        easing: Easing.inOut(Easing.ease),
-      })
-      isTabEnabled.value = false
-    }
-  }
-
-  const cardAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateX: translateX.value }],
-    }
-  })
+  const {
+    panableRef,
+    tapableRef,
+    cardAnimatedStyle,
+    panGestureHandler,
+    onTap,
+  } = useTaskCardSmallController()
 
   const onDeletePress = () => {
-    if (onClickDelete) {
-      onClickDelete(task.id)
-    }
+    onClickDelete?.(task.id)
   }
 
   return (
@@ -101,6 +53,7 @@ export const TaskCardSmall: FC<TaskCardProps> = ({
         <TouchableOpacity
           style={[localStyles.btnDelete]}
           onPress={onDeletePress}
+          testID={`${testID}-btn-delete`}
         >
           <Trash />
         </TouchableOpacity>
@@ -112,7 +65,10 @@ export const TaskCardSmall: FC<TaskCardProps> = ({
         waitFor={panableRef}
         onGestureEvent={panGestureHandler}
       >
-        <Animated.View style={[cardAnimatedStyle, localStyles.swipableRow]}>
+        <Animated.View
+          testID={`${testID}-view-panable`}
+          style={[cardAnimatedStyle, localStyles.swipableRow]}
+        >
           <View style={[localStyles.checkBoxSection]}>
             <CheckBox
               onValueChange={(value) => onClickCheck?.(task.id, value)}

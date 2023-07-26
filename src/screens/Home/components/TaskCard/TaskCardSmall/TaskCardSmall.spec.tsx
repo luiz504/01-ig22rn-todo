@@ -73,4 +73,25 @@ describe('TaskCard Component', () => {
     expect(onClickCheckMocked).toHaveBeenCalledTimes(1)
     expect(onClickCheckMocked).toHaveBeenCalledWith(task.id, !task.done)
   })
+
+  it('should call onClickDelete with the correct task id when delete button is pressed', async () => {
+    const onClickDeleteMock = jest.fn()
+
+    render(
+      <TaskCardSmall
+        task={task}
+        testID={rootTaskId}
+        onClickDelete={onClickDeleteMock}
+      />,
+    )
+
+    // Find the delete button and press it
+    const deleteButton = screen.getByTestId(`${rootTaskId}-btn-delete`)
+
+    fireEvent.press(deleteButton)
+
+    // Check if onClickDeleteMock was called with the correct task id
+    expect(onClickDeleteMock).toHaveBeenCalledTimes(1)
+    expect(onClickDeleteMock).toHaveBeenCalledWith(task.id)
+  })
 })
