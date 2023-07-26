@@ -24,7 +24,7 @@ jest.mock('react-hook-form', () => {
 describe('useHomeController Hook', () => {
   const handleCreateTaskMocked = jest.fn()
 
-  const TestWrapper: FC<{ children: ReactNode }> = ({ children }) => (
+  const Wrapper: FC<{ children: ReactNode }> = ({ children }) => (
     <QueryClientProvider client={queryClientTest}>
       <TasksContext.Provider
         value={{ handleCreateTask: handleCreateTaskMocked } as any}
@@ -36,7 +36,7 @@ describe('useHomeController Hook', () => {
 
   const renderHookWithWrapper = () =>
     renderHook(() => useHomeController(), {
-      wrapper: TestWrapper,
+      wrapper: Wrapper,
     })
 
   it('should call "handleCreateTask" with the input Value when call function "onSubmit"', async () => {

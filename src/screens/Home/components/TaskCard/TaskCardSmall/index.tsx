@@ -38,7 +38,7 @@ export const TaskCardSmall: FC<TaskCardProps> = ({
 
   return (
     <View
-      testID={`${testID}-small`}
+      testID={`${testID}`}
       style={[localStyles.wrapper, isChecked && styles.containerChecked]}
     >
       <Animated.View

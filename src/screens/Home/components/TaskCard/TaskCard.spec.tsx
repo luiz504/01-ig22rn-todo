@@ -24,7 +24,7 @@ describe('TaskCard Component', () => {
   it('should render TaskCardSmall when screen width is under 768', () => {
     useDimensionApiSpyMock(767)
 
-    render(<TaskCard testID={testIdRoot} task={task} />)
+    render(<TaskCard testID={`${testIdRoot}-small`} task={task} />)
 
     expect(screen.getByTestId(`${testIdRoot}-small`)).toBeTruthy()
   })
@@ -32,21 +32,8 @@ describe('TaskCard Component', () => {
   it('should render TaskCardBig component when the screen is equal or greater than 768', () => {
     useDimensionApiSpyMock(768)
 
-    render(<TaskCard testID={testIdRoot} task={task} />)
+    render(<TaskCard testID={`${testIdRoot}-big`} task={task} />)
 
     expect(screen.getByTestId(`${testIdRoot}-big`)).toBeTruthy()
   })
 })
-// it('should apply some styles when the width is greater than 768 units', () => {
-//   const minWidthSpy = jest.spyOn(Dimensions, 'get')
-
-//   minWidthSpy.mockImplementation(() => ({ width: 800 }) as any)
-
-//   render(<TaskCardBig testID={rootTaskId} task={task} />)
-
-//   const taskCard = screen.getByTestId('task-card')
-
-//   expect(taskCard).toHaveStyle(styles.containerLarger)
-
-//   minWidthSpy.mockRestore()
-// })

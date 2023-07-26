@@ -16,7 +16,7 @@ describe('TaskCard Component', () => {
     const checkboxSpy = jest.spyOn(CheckBoxModule, 'CheckBox')
     render(<TaskCardSmall testID={rootTaskId} task={task} />)
 
-    const taskCard = screen.getByTestId(`${rootTaskId}-small`)
+    const taskCard = screen.getByTestId(`${rootTaskId}`)
     const text = screen.getByTestId(`${rootTaskId}-text`)
 
     expect(taskCard).toBeTruthy()
@@ -38,7 +38,7 @@ describe('TaskCard Component', () => {
 
     render(<TaskCardSmall testID={rootTaskId} task={{ ...task, done: true }} />)
 
-    const taskCard = screen.getByTestId(`${rootTaskId}-small`)
+    const taskCard = screen.getByTestId(`${rootTaskId}`)
     const text = screen.getByTestId(`${rootTaskId}-text`)
 
     expect(taskCard).toBeTruthy()
