@@ -5,9 +5,8 @@ import { TasksContext } from '@/context/tasksContext'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { useController } from 'react-hook-form'
 
-import { queryClientTest } from '@/libs/queryClient'
-
 import { useHomeController } from './controller'
+import { queryClientTest } from '__mocks__/queryClient'
 
 jest.mock('react-hook-form', () => {
   const original = jest.requireActual('react-hook-form')
@@ -25,7 +24,7 @@ jest.mock('react-hook-form', () => {
 describe('useHomeController Hook', () => {
   const handleCreateTaskMocked = jest.fn()
 
-  const TestWrapper: FC<{ children: ReactNode }> = ({ children }) => (
+  const Wrapper: FC<{ children: ReactNode }> = ({ children }) => (
     <QueryClientProvider client={queryClientTest}>
       <TasksContext.Provider
         value={{ handleCreateTask: handleCreateTaskMocked } as any}
@@ -37,10 +36,10 @@ describe('useHomeController Hook', () => {
 
   const renderHookWithWrapper = () =>
     renderHook(() => useHomeController(), {
-      wrapper: TestWrapper,
+      wrapper: Wrapper,
     })
 
-  it('should call "handleCreateTask" with the input Value when call function "onSubmit"', async () => {
+  it('should call "handleCreateTask" with the input value when "onSubmit" is called', async () => {
     const { result } = renderHookWithWrapper()
 
     // Wait for Async hook finishes rendering
@@ -59,6 +58,7 @@ describe('useHomeController Hook', () => {
         control: result.current.control,
       }),
     )
+
     const taskName = 'task Fake 42'
     act(() => {
       useControllerResult.current.field.onChange(taskName)

@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import React, { useCallback } from 'react'
 import { StyleSheet } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { StatusBar } from 'expo-status-bar'

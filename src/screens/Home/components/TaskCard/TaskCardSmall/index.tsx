@@ -1,11 +1,7 @@
-import { FC } from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { Swipeable } from 'react-native-gesture-handler'
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated'
+import React, { FC } from 'react'
+import { StyleSheet, Text, TouchableHighlight, View } from 'react-native'
+import { GestureDetector } from 'react-native-gesture-handler'
+import Animated from 'react-native-reanimated'
 
 import { CheckBox } from '@/components/CheckBox'
 import Trash from '@assets/trash.svg'
@@ -15,21 +11,7 @@ import { styles } from '../styles'
 import { TaskCardProps } from '../types'
 
 import { colors } from '@/styles'
-
-const useRightActionAnimation = (progress: Animated.SharedValue<number>) => {
-  const rightActionStyle = useAnimatedStyle(() => {
-    const trans = progress.value * 0 // Adjust this value as needed
-    const opacity = withTiming(progress.value, {
-      duration: 50, // Adjust this value for the duration of the animation
-    })
-    return {
-      opacity,
-      transform: [{ translateX: -trans }],
-    }
-  })
-
-  return rightActionStyle
-}
+import { useTaskCardSmallController } from './controller'
 
 export const TaskCardSmall: FC<TaskCardProps> = ({
   task,
@@ -39,64 +21,66 @@ export const TaskCardSmall: FC<TaskCardProps> = ({
 }) => {
   const isChecked = task.done
 
-  const progress = useSharedValue(0)
+  const { cardAnimatedStyle, tapGestureHandler, panGestureHandler } =
+    useTaskCardSmallController()
 
-  const rightActionStyle = useRightActionAnimation(progress)
-
-  const onSwipeableOpen = () => {
-    progress.value = 1
+  const onDeletePress = () => {
+    onClickDelete?.(task.id)
   }
 
-  const onSwipeableClose = () => {
-    progress.value = 0
-  }
-
-  const onPressDelete = () => {
-    if (onClickDelete) {
-      onClickDelete(task.id)
-    }
-  }
   return (
-    <View style={[localStyles.wrapper, isChecked && styles.containerChecked]}>
-      <Swipeable
-        renderRightActions={() => (
-          <Animated.View
-            style={[rightActionStyle, { zIndex: 20, elevation: 20 }]}
-          >
-            <TouchableOpacity
-              style={[localStyles.btnDelete]}
-              onPress={onPressDelete}
-            >
-              <Trash />
-            </TouchableOpacity>
-          </Animated.View>
-        )}
-        onSwipeableOpen={onSwipeableOpen}
-        onSwipeableClose={onSwipeableClose}
-        useNativeAnimations={false}
-        overshootRight={false}
-        friction={2}
-        enableTrackpadTwoFingerGesture
-        rightThreshold={64}
+    <View
+      testID={`${testID}`}
+      style={[localStyles.wrapper, isChecked && styles.containerChecked]}
+    >
+      <Animated.View
+        style={[
+          {
+            ...StyleSheet.absoluteFillObject,
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+          },
+        ]}
       >
-        <View testID={testID} style={[localStyles.viewSection]}>
-          <CheckBox
-            onValueChange={(value) => onClickCheck?.(task.id, value)}
-            value={isChecked}
-            testID={`${testID}-checkbox`}
-          />
+        <TouchableHighlight
+          style={[localStyles.btnDelete]}
+          onPress={onDeletePress}
+          testID={`${testID}-btn-delete`}
+          underlayColor={'rgba(255,100,100, .1)'}
+        >
+          <Trash />
+        </TouchableHighlight>
+      </Animated.View>
 
-          <Text
-            testID={`${testID}-text`}
-            style={[styles.text, isChecked && styles.textChecked]}
-          >
-            {task.description}
-          </Text>
-        </View>
-      </Swipeable>
+      <GestureDetector gesture={panGestureHandler}>
+        <Animated.View
+          testID={`${testID}-view-panable`}
+          style={[cardAnimatedStyle, localStyles.panableRow]}
+        >
+          <View style={[localStyles.checkBoxSection]}>
+            <CheckBox
+              onValueChange={(value) => onClickCheck?.(task.id, value)}
+              value={isChecked}
+              testID={`${testID}-checkbox`}
+            />
+          </View>
+
+          <GestureDetector gesture={tapGestureHandler}>
+            <View style={[localStyles.textSection]}>
+              <Text
+                testID={`${testID}-text`}
+                style={[styles.text, isChecked && styles.textChecked]}
+              >
+                {task.description}
+              </Text>
+            </View>
+          </GestureDetector>
+        </Animated.View>
+      </GestureDetector>
     </View>
   )
 }
+
 const localStyles = StyleSheet.create({
   wrapper: {
     borderWidth: 2,
@@ -104,18 +88,27 @@ const localStyles = StyleSheet.create({
     borderRadius: 8,
     overflow: 'hidden',
   },
-  viewSection: {
+  panableRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 12,
+    backgroundColor: colors['gray-500'],
+    overflow: 'hidden',
+  },
+  checkBoxSection: {
     paddingVertical: 12,
     paddingLeft: 12,
-    paddingRight: 8,
+  },
+  textSection: {
+    paddingVertical: 12,
+    paddingRight: 12,
+    flex: 1,
+    height: '100%',
   },
   btnDelete: {
     height: '100%',
     justifyContent: 'center',
     padding: 12,
-    backgroundColor: colors['gray-500'],
+    backgroundColor: colors['gray-400'],
   },
 })

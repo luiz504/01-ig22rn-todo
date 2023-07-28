@@ -1,6 +1,6 @@
 import { queryClient } from '@/libs/queryClient'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { QueryClient, useMutation, useQuery } from '@tanstack/react-query'
 import { Alert } from 'react-native'
 import { z } from 'zod'
 
@@ -13,8 +13,8 @@ const tasksSchema = z.array(taskSchema)
 
 export type Task = z.infer<typeof taskSchema>
 
-const STORAGE_KEY = '@tasks'
-const QUERY_KEY = [STORAGE_KEY]
+export const STORAGE_KEY = '@tasks'
+export const QUERY_KEY = [STORAGE_KEY]
 
 const fetchTasks = async (): Promise<Task[]> => {
   const storedTasks = await AsyncStorage.getItem(STORAGE_KEY)
@@ -24,6 +24,7 @@ const fetchTasks = async (): Promise<Task[]> => {
   try {
     const tasksStored = JSON.parse(storedTasks)
     await tasksSchema.parseAsync(tasksStored)
+
     return tasksStored
   } catch (err) {
     await AsyncStorage.removeItem(STORAGE_KEY)
@@ -38,7 +39,8 @@ const saveTasks = async (tasks: Task[]) => {
   // })
   await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(tasks))
 }
-export const useTasksQueries = () => {
+export const useTasksQueries = (client?: QueryClient) => {
+  const _queryClient = client || queryClient
   const tasksQuery = useQuery({
     queryKey: QUERY_KEY,
     queryFn: fetchTasks,
@@ -50,23 +52,23 @@ export const useTasksQueries = () => {
     },
     onMutate: async (updatedTasks: Task[]) => {
       // Prevent Overwrite
-      await queryClient.cancelQueries({ queryKey: QUERY_KEY })
+      await _queryClient.cancelQueries({ queryKey: QUERY_KEY })
 
-      const previousTasks = await queryClient.getQueryData(QUERY_KEY)
+      const previousTasks = await _queryClient.getQueryData(QUERY_KEY)
 
-      queryClient.setQueryData(QUERY_KEY, updatedTasks)
+      _queryClient.setQueryData(QUERY_KEY, updatedTasks)
 
       return { previousTasks }
     },
     onError: (_, __, context) => {
-      queryClient.setQueryData(QUERY_KEY, context?.previousTasks || [])
+      _queryClient.setQueryData(QUERY_KEY, context?.previousTasks)
       Alert.alert(
         'Fail to create new Task.',
         'Returning the previous tasks state.',
       )
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEY })
+      _queryClient.invalidateQueries({ queryKey: QUERY_KEY })
     },
   })
 
@@ -76,20 +78,23 @@ export const useTasksQueries = () => {
     },
     onMutate: async (updatedTasks: Task[]) => {
       // Prevent Overwrite
-      await queryClient.cancelQueries({ queryKey: QUERY_KEY })
+      await _queryClient.cancelQueries({ queryKey: QUERY_KEY })
 
-      const previousTasks = await queryClient.getQueryData(QUERY_KEY)
+      const previousTasks = await _queryClient.getQueryData<Promise<Task[]>>(
+        QUERY_KEY,
+      )
 
-      queryClient.setQueryData(QUERY_KEY, updatedTasks)
+      _queryClient.setQueryData(QUERY_KEY, updatedTasks)
 
       return { previousTasks }
     },
     onError: (_, __, context) => {
-      queryClient.setQueryData(QUERY_KEY, context?.previousTasks || [])
+      _queryClient.setQueryData(QUERY_KEY, context?.previousTasks)
+
       Alert.alert('Fail to delete Task.', 'Returning the previous tasks state.')
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEY })
+      _queryClient.invalidateQueries({ queryKey: QUERY_KEY })
     },
   })
 
@@ -99,20 +104,23 @@ export const useTasksQueries = () => {
     },
     onMutate: async (updatedTasks: Task[]) => {
       // Prevent Overwrite
-      await queryClient.cancelQueries({ queryKey: QUERY_KEY })
+      await _queryClient.cancelQueries({ queryKey: QUERY_KEY })
 
-      const previousTasks = await queryClient.getQueryData(QUERY_KEY)
+      const previousTasks = await _queryClient.getQueryData<Promise<Task[]>>(
+        QUERY_KEY,
+      )
 
-      queryClient.setQueryData(QUERY_KEY, updatedTasks)
+      _queryClient.setQueryData(QUERY_KEY, updatedTasks)
 
       return { previousTasks }
     },
     onError: (_, __, context) => {
-      queryClient.setQueryData(QUERY_KEY, context?.previousTasks || [])
+      _queryClient.setQueryData(QUERY_KEY, context?.previousTasks)
+
       Alert.alert('Fail to update Task.', 'Returning the previous tasks state.')
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEY })
+      _queryClient.invalidateQueries({ queryKey: QUERY_KEY })
     },
   })
 

@@ -14,7 +14,7 @@ const control = {
 }
 const useControllerMocked = jest.mocked(useController)
 describe('TaskInput Component', () => {
-  it('should render correctly', () => {
+  it('should render correctly with the specified styles', () => {
     useControllerMocked.mockReturnValue(control as any)
 
     render(<TaskInput placeholder="Placeholder" control={control as any} />)
@@ -34,7 +34,7 @@ describe('TaskInput Component', () => {
     })
   })
 
-  it('should Change Border color when get Focus', () => {
+  it('should change border color when focused', () => {
     useControllerMocked.mockReturnValue(control as any)
     render(<TaskInput placeholder="Placeholder" control={control as any} />)
 
@@ -45,7 +45,7 @@ describe('TaskInput Component', () => {
     expect(input).toHaveStyle({ borderColor: colors['purple-dark'] })
   })
 
-  it('should return to default border Color when Blur event happens', () => {
+  it('should return to the default border color when blurred', () => {
     useControllerMocked.mockReturnValue(control as any)
     render(<TaskInput placeholder="Placeholder" control={control as any} />)
 
@@ -60,7 +60,7 @@ describe('TaskInput Component', () => {
     expect(input).toHaveStyle({ borderColor: colors['gray-500'] })
   })
 
-  it('should call function field.onChange with the input value', () => {
+  it('should call field.onChange with the input value when text changes', () => {
     const control = jest.fn()
     const onChangeMock = jest.fn()
     useControllerMocked.mockReturnValue({

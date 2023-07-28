@@ -11,12 +11,12 @@ const task = {
 }
 const rootTaskId = 'task-card'
 
-describe('TaskCard Component', () => {
-  it('should render Correctly Unchecked', () => {
+describe('TaskCardSmall Component', () => {
+  it('should render correctly with unchecked state', () => {
     const checkboxSpy = jest.spyOn(CheckBoxModule, 'CheckBox')
     render(<TaskCardSmall testID={rootTaskId} task={task} />)
 
-    const taskCard = screen.getByTestId('task-card')
+    const taskCard = screen.getByTestId(`${rootTaskId}`)
     const text = screen.getByTestId(`${rootTaskId}-text`)
 
     expect(taskCard).toBeTruthy()
@@ -33,12 +33,12 @@ describe('TaskCard Component', () => {
     checkboxSpy.mockRestore()
   })
 
-  it('should render Correctly Checked', () => {
+  it('should render correctly with checked state', () => {
     const checkboxSpy = jest.spyOn(CheckBoxModule, 'CheckBox')
 
     render(<TaskCardSmall testID={rootTaskId} task={{ ...task, done: true }} />)
 
-    const taskCard = screen.getByTestId('task-card')
+    const taskCard = screen.getByTestId(`${rootTaskId}`)
     const text = screen.getByTestId(`${rootTaskId}-text`)
 
     expect(taskCard).toBeTruthy()
@@ -55,7 +55,7 @@ describe('TaskCard Component', () => {
     checkboxSpy.mockRestore()
   })
 
-  it('should call onClickCheck callback passing the correct arguments', () => {
+  it('should call onClickCheck callback with the correct arguments when checkbox is pressed', () => {
     const onClickCheckMocked = jest.fn()
 
     render(
@@ -74,21 +74,24 @@ describe('TaskCard Component', () => {
     expect(onClickCheckMocked).toHaveBeenCalledWith(task.id, !task.done)
   })
 
-  // it('should call  onClickDelete callback passing the correct arguments', () => {
-  //   const onClickDeleteMocked = jest.fn()
+  it('should call onClickDelete callback with the correct arguments when delete button is pressed', async () => {
+    const onClickDeleteMock = jest.fn()
 
-  //   render(
-  //     <TaskCardSmall
-  //       testID={rootTaskId}
-  //       task={task}
-  //       onClickDelete={onClickDeleteMocked}
-  //     />,
-  //   )
-  //   const btnDelete = screen.getByTestId(`${rootTaskId}-btn-delete`)
+    render(
+      <TaskCardSmall
+        task={task}
+        testID={rootTaskId}
+        onClickDelete={onClickDeleteMock}
+      />,
+    )
 
-  //   fireEvent.press(btnDelete)
+    // Find the delete button and press it
+    const deleteButton = screen.getByTestId(`${rootTaskId}-btn-delete`)
 
-  //   expect(onClickDeleteMocked).toBeCalledTimes(1)
-  //   expect(onClickDeleteMocked).toHaveBeenCalledWith(task.id)
-  // })
+    fireEvent.press(deleteButton)
+
+    // Check if onClickDeleteMock was called with the correct task id
+    expect(onClickDeleteMock).toHaveBeenCalledTimes(1)
+    expect(onClickDeleteMock).toHaveBeenCalledWith(task.id)
+  })
 })

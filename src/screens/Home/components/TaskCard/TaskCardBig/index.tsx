@@ -20,7 +20,7 @@ export const TaskCardBig: FC<TaskCardProps> = ({
 
   return (
     <View
-      testID={testID}
+      testID={`${testID}`}
       style={[
         styles.container,
         styles.containerLarger,
