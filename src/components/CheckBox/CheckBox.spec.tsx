@@ -1,7 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react-native'
 import { CheckBox, styles } from '.'
-import { Check } from 'phosphor-react-native'
-import { colors } from '@/styles'
 
 describe('CheckBox Component', () => {
   const testId = 'checkbox'
@@ -13,13 +11,20 @@ describe('CheckBox Component', () => {
     expect(checkBox).toBeTruthy()
     expect(checkBox).toHaveStyle(styles.container)
 
-    const svg = screen.UNSAFE_getByType(Check)
+    const svgElement = screen.getByTestId(`${testId}-check-icon`)
 
-    expect(svg).not.toBeVisible()
+    expect(svgElement).not.toBeVisible()
   })
 
   it('should render correctly when checked', () => {
-    render(<CheckBox testID={testId} value={true} onValueChange={() => {}} />)
+    render(
+      <CheckBox
+        testID={testId}
+        value={true}
+        size={50}
+        onValueChange={() => {}}
+      />,
+    )
     const checkBox = screen.getByTestId(testId)
 
     expect(checkBox).toBeTruthy()
@@ -28,11 +33,12 @@ describe('CheckBox Component', () => {
       ...styles.containerChecked,
     })
 
-    const svg = screen.UNSAFE_getByType(Check)
+    const svgElement = screen.getByTestId(`${testId}-check-icon`)
 
-    expect(svg).toBeVisible()
+    expect(svgElement).toBeVisible()
 
-    expect(svg.props.color).toBe(colors['gray-100'])
+    expect(svgElement).toHaveProp('width', 50)
+    expect(svgElement).toHaveProp('height', 50)
   })
 
   it('should call onValueChange with true when pressed (unchecked to checked)', () => {

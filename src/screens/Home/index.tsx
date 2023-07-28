@@ -1,7 +1,7 @@
 import { FlatList, Text, TouchableOpacity, View } from 'react-native'
-import { PlusCircle } from 'phosphor-react-native'
 
 import Logo from '@assets/logo-full.svg'
+import PlusCircle from '@assets/plus.svg'
 
 import { styles } from './styles'
 import { colors } from '@/styles'
@@ -43,7 +43,7 @@ export const Home = () => {
             testID="submit-button"
             onPress={onSubmit}
           >
-            <PlusCircle color={colors['gray-100']} weight="bold" size={24} />
+            <PlusCircle width={24} height={24} testID="plus-icon" />
           </TouchableOpacity>
         </View>
 
