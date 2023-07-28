@@ -5,7 +5,7 @@ import { Task } from '@/hooks/useTasksQueries'
 
 import * as TC from '@/context/tasksContext'
 describe('TaskCard Component', () => {
-  const useDimensionApiSpyMock = (width: number) =>
+  const useDimensionApiSpyReturn = (width: number) =>
     jest.spyOn(Dimensions, 'get').mockReturnValueOnce({ width } as any)
 
   const task: Task = {
@@ -21,16 +21,16 @@ describe('TaskCard Component', () => {
     handleUpdateTaskStatus: jest.fn(),
   } as any)
 
-  it('should render TaskCardSmall when screen width is under 768', () => {
-    useDimensionApiSpyMock(767)
+  it('should render TaskCardSmall when the screen width is less than 768', () => {
+    useDimensionApiSpyReturn(767)
 
     render(<TaskCard testID={`${testIdRoot}-small`} task={task} />)
 
     expect(screen.getByTestId(`${testIdRoot}-small`)).toBeTruthy()
   })
 
-  it('should render TaskCardBig component when the screen is equal or greater than 768', () => {
-    useDimensionApiSpyMock(768)
+  it('should render TaskCardBig component when the screen width is equal to or greater than 768', () => {
+    useDimensionApiSpyReturn(768)
 
     render(<TaskCard testID={`${testIdRoot}-big`} task={task} />)
 

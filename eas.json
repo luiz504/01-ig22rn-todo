@@ -1,0 +1,25 @@
+{
+  "cli": {
+    "version": ">= 3.17.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "preview-apk": {
+      "android": { "buildType": "apk" },
+      "env": {
+        "EAS_LOCAL_BUILD_ARTIFACTS_DIR": "./builds"
+      }
+    },
+
+    "production": {}
+  },
+  "submit": {
+    "production": {}
+  }
+}

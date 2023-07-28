@@ -24,7 +24,7 @@ describe('Home Component', () => {
     </QueryClientProvider>
   )
 
-  it('should render correctly - container - logo - input - submit-btn', () => {
+  it('should render the container, logo, input, and submit button correctly', () => {
     render(<Home />, { wrapper: Wrapper })
 
     const containerElement = screen.getByTestId('screen-container')
@@ -37,7 +37,7 @@ describe('Home Component', () => {
     expect(inputElement).toBeTruthy()
     expect(submitButtonElement).toBeTruthy()
   })
-  it('should render correctly the taskCardList', async () => {
+  it('should render the taskCardList correctly', async () => {
     useUseTasksStoreSpy().mockReturnValueOnce({
       tasksQuery: { data: tasksInitial },
       addTaskMutation: { isLoading: false, mutateAsync: jest.fn() },
@@ -57,7 +57,7 @@ describe('Home Component', () => {
     expect(screen.getByText(tasksInitial[1].description)).toBeTruthy()
     expect(screen.queryByTestId('empty-feedback')).not.toBeTruthy()
   })
-  it('should render correctly the Empty Feedback', async () => {
+  it('should render the Empty Feedback when there are no tasks', async () => {
     useUseTasksStoreSpy().mockReturnValueOnce({
       tasksQuery: { data: [] },
       addTaskMutation: { isLoading: false, mutateAsync: jest.fn() },

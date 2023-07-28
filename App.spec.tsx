@@ -1,27 +1,33 @@
 import { render, screen } from '@testing-library/react-native'
 
-import { useFonts } from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
 
 import App from './App'
 import { StatusBar } from 'expo-status-bar'
 
+import * as expoFont from 'expo-font'
+
 jest.mock('expo-font')
 jest.mock('expo-splash-screen')
 
-const useFontsMocked = jest.mocked(useFonts)
-const hideAsyncMocked = jest.mocked(SplashScreen.hideAsync)
-
 describe('App Component', () => {
-  it('should return null when no font is loaded', () => {
-    useFontsMocked.mockReturnValueOnce([false, null])
+  const useFontsSpy = () => jest.spyOn(expoFont, 'useFonts')
+  const useHideAsyncSpy = () => jest.spyOn(SplashScreen, 'hideAsync')
+
+  beforeEach(() => {
+    jest.useFakeTimers()
+    jest.resetAllMocks()
+  })
+  it('should render null when no font is loaded', () => {
+    useFontsSpy().mockReturnValue([false, null])
+
     render(<App />)
 
     expect(screen.queryByTestId('app-container')).toBeNull()
   })
 
-  it('should render correctly when fonts loaded', () => {
-    useFontsMocked.mockReturnValueOnce([true, null])
+  it('should render correctly with loaded fonts', () => {
+    useFontsSpy().mockReturnValueOnce([true, null])
 
     render(<App />)
 
@@ -35,22 +41,23 @@ describe('App Component', () => {
   })
 
   it('should call SplashScreen.hideAsync when fonts are loaded', async () => {
-    useFontsMocked.mockReturnValueOnce([true, null])
-    hideAsyncMocked.mockResolvedValueOnce(true)
+    useFontsSpy().mockReturnValueOnce([true, null])
+
+    const hideAsyncSpy = useHideAsyncSpy()
+
     render(<App />)
 
     await screen.getByTestId('app-container').props.onLayout()
 
-    expect(hideAsyncMocked).toHaveBeenCalledTimes(1)
-
-    hideAsyncMocked.mockRestore()
+    expect(hideAsyncSpy).toHaveBeenCalledTimes(1)
   })
+
   it('should not call SplashScreen.hideAsync when fonts are not loaded', async () => {
-    useFontsMocked.mockReturnValueOnce([false, null])
-    hideAsyncMocked.mockResolvedValueOnce(true)
+    useFontsSpy().mockReturnValueOnce([false, null])
+    const hideAsyncSpy = useHideAsyncSpy()
 
     render(<App />)
 
-    expect(hideAsyncMocked).not.toHaveBeenCalled()
+    expect(hideAsyncSpy).not.toHaveBeenCalled()
   })
 })

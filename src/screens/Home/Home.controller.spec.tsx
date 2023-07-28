@@ -39,7 +39,7 @@ describe('useHomeController Hook', () => {
       wrapper: Wrapper,
     })
 
-  it('should call "handleCreateTask" with the input Value when call function "onSubmit"', async () => {
+  it('should call "handleCreateTask" with the input value when "onSubmit" is called', async () => {
     const { result } = renderHookWithWrapper()
 
     // Wait for Async hook finishes rendering

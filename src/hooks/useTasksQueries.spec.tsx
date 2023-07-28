@@ -44,6 +44,7 @@ describe('useTasksQueries Hook', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    jest.useFakeTimers()
     queryClientTest.removeQueries()
   })
 
@@ -66,7 +67,7 @@ describe('useTasksQueries Hook', () => {
       expect(result.current.tasksQuery.data).toEqual(tasksInitial)
     })
 
-    it('on Invalid stored data should initialize the tasks List empty', async () => {
+    it('on invalid stored data should initialize the tasks list as empty', async () => {
       jest
         .spyOn(AsyncStorage, 'getItem')
         .mockReturnValueOnce([{ id: 'ddd' }] as any)
@@ -92,7 +93,7 @@ describe('useTasksQueries Hook', () => {
   })
 
   describe('addTaskMutation', () => {
-    it('should save updated tasks after created new Tasks', async () => {
+    it('should save updated tasks after creating new tasks', async () => {
       useAsyncStorageSpyResolveGetItem(tasksInitial)
 
       const { result } = renderHook(() => useTasksQueries(), {
@@ -112,7 +113,7 @@ describe('useTasksQueries Hook', () => {
       })
     })
 
-    it('rollback the tasks state and trigger an alert to the user', async () => {
+    it('should rollback the tasks state and trigger an alert to the user on error', async () => {
       useAsyncStorageSpyResolveGetItem(tasksInitial)
       useAsyncStorageSpyRejectSetItem()
       const invalidateQueriesSpy = useInvalidateQueriesSpy()
@@ -149,7 +150,7 @@ describe('useTasksQueries Hook', () => {
   })
 
   describe('deleteTaskMutation', () => {
-    it('should save updated Tasks after Delete', async () => {
+    it('should save updated tasks after deleting a task', async () => {
       useAsyncStorageSpyResolveGetItem(tasksInitial)
 
       const { result } = renderHook(() => useTasksQueries(), {
@@ -168,7 +169,7 @@ describe('useTasksQueries Hook', () => {
         expect(value).toHaveLength(1)
       })
     })
-    it('on Error should rollback the tasks state and trigger an alert to the user', async () => {
+    it('should rollback the tasks state and trigger an alert to the user on error', async () => {
       useAsyncStorageSpyResolveGetItem(tasksInitial)
       useAsyncStorageSpyRejectSetItem()
       const invalidateQueriesSpy = useInvalidateQueriesSpy()
@@ -203,7 +204,7 @@ describe('useTasksQueries Hook', () => {
   })
 
   describe('updateTaskMutation', () => {
-    it('should save updated tasks after change Status', async () => {
+    it('should save updated tasks after changing task status', async () => {
       useAsyncStorageSpyResolveGetItem(tasksInitial)
 
       const { result } = renderHook(() => useTasksQueries(), {
@@ -225,7 +226,7 @@ describe('useTasksQueries Hook', () => {
       })
     })
 
-    it('on Error should rollback the tasks state and trigger an alert to the user', async () => {
+    it('should rollback the tasks state and trigger an alert to the user on error', async () => {
       useAsyncStorageSpyResolveGetItem(tasksInitial)
       useAsyncStorageSpyRejectSetItem()
       const invalidateQueriesSpy = useInvalidateQueriesSpy()

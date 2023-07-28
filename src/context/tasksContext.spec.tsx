@@ -140,7 +140,7 @@ describe('Tasks Context', () => {
       )
     })
 
-    it('should not call updateTaskStatusMutation when tasks id does not exist', async () => {
+    it('should not call updateTaskStatusMutation when the task ID does not exist', async () => {
       const { updateTaskStatusMutation } = useTasksQueriesSpyReturn({
         data: tasksInitial,
       } as any)
@@ -155,7 +155,7 @@ describe('Tasks Context', () => {
       expect(updateTaskStatusMutation.mutateAsync).not.toHaveBeenCalled()
     })
 
-    it('should not call updateTaskStatusMutation when tasks status has not changed', async () => {
+    it('should not call updateTaskStatusMutation when the task status has not changed', async () => {
       const { updateTaskStatusMutation } = useTasksQueriesSpyReturn({
         data: tasksInitial,
       } as any)
@@ -203,7 +203,7 @@ describe('Tasks Context', () => {
       // The hook should return the provided context value
       expect(result.current).toEqual(tasksContextValue)
     })
-    it('should trigger error when not wrapped by its context', () => {
+    it('should trigger an error when not wrapped by its context', () => {
       // eslint-disable-next-line no-console
       const originalError = console.error
       // eslint-disable-next-line no-console
