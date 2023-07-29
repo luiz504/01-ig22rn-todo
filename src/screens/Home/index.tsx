@@ -36,6 +36,7 @@ export const Home = () => {
             testID="input"
             placeholder="Add a new task"
             placeholderTextColor={colors['gray-300']}
+            onSubmitEditing={onSubmit}
           />
 
           <TouchableOpacity
