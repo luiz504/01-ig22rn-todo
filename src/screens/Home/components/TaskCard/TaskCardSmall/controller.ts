@@ -39,7 +39,11 @@ export const useTaskCardSmallController = () => {
             isTapEnabled.value = true
           }
         })
+        .shouldCancelWhenOutside(true)
+        .minDistance(20)
+
         .withTestId('pan'),
+
     [isTapEnabled, translateX],
   )
 

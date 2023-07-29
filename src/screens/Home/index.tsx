@@ -74,6 +74,7 @@ export const Home = () => {
           data={tasks}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ rowGap: 8 }}
+          showsVerticalScrollIndicator={false}
           renderItem={({ item }) => <TaskCard task={item} testID="task-card" />}
         />
         {isLoading && <Text> Loading ...</Text>}
