@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { PressableProps, StyleSheet, TouchableOpacity } from 'react-native'
-import { Check } from 'phosphor-react-native'
+import Check from '@assets/check.svg'
 
 import { colors } from '@/styles'
 
@@ -17,7 +17,6 @@ export const CheckBox: FC<CheckboxProps> = ({
   testID,
 }) => {
   const showCheckIcon = isChecked ? 1 : 0
-  const iconSize = size / 1.5
 
   return (
     <TouchableOpacity
@@ -34,9 +33,9 @@ export const CheckBox: FC<CheckboxProps> = ({
     >
       <Check
         style={{ opacity: showCheckIcon }}
-        color={colors['gray-100']}
-        weight="bold"
-        size={iconSize}
+        width={size}
+        height={size}
+        testID={`${testID}-check-icon`}
       />
     </TouchableOpacity>
   )
